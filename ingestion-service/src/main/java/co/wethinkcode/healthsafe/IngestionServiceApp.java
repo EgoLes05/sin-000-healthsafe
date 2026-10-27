@@ -34,7 +34,7 @@ public class IngestionServiceApp {
         });
     }
 
-    private static List<Map<String, Object>> readAndCleanWards()
+    static List<Map<String, Object>> readAndCleanWards()
             throws Exception {
 
         Map<String, Map<String, Object>> wards = new LinkedHashMap<>();
