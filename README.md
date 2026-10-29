@@ -173,6 +173,8 @@ To add real tests to a module, add JUnit 5 and Surefire to its `pom.xml`:
 </plugin>
 ```
 
+WTC-SSNGNDAH
+
 then add tests under that module's `src/test/java/...` and run:
 
 ```
