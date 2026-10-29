@@ -1,4 +1,3 @@
-
 package co.wethinkcode.healthsafe;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,7 +16,7 @@ import java.util.Objects;
 public class WardServiceApp {
 
     private static final String INGESTION_URL =
-            "http://localhost:7030/wards";
+        "http://127.0.0.1:7030/wards";
 
     private static final HttpClient client = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(3))
@@ -38,9 +37,7 @@ public class WardServiceApp {
                 List<Map<String, Object>> wards = fetchWards();
                 ctx.json(wards);
             } catch (Exception e) {
-                ctx.status(503).json(Map.of(
-                        "error", "Ingestion Service unavailable"
-                ));
+                ingestionUnavailable(ctx, e);
             }
         });
 
@@ -67,9 +64,7 @@ public class WardServiceApp {
                 }
 
             } catch (Exception e) {
-                ctx.status(503).json(Map.of(
-                        "error", "Ingestion Service unavailable"
-                ));
+                ingestionUnavailable(ctx, e);
             }
         });
 
@@ -88,9 +83,7 @@ public class WardServiceApp {
                 ctx.json(departments);
 
             } catch (Exception e) {
-                ctx.status(503).json(Map.of(
-                        "error", "Ingestion Service unavailable"
-                ));
+                ingestionUnavailable(ctx, e);
             }
         });
     }
@@ -120,5 +113,14 @@ public class WardServiceApp {
                 response.body(),
                 new TypeReference<List<Map<String, Object>>>() {}
         );
+    }
+
+    private static void ingestionUnavailable(io.javalin.http.Context ctx, Exception e) {
+        System.err.println("[ward-service] Call to " + INGESTION_URL + " failed: " + e);
+        ctx.status(503).json(Map.of(
+                "error", "Ingestion Service unavailable",
+                "url", INGESTION_URL,
+                "cause", String.valueOf(e)
+        ));
     }
 }
